@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html { -webkit-font-smoothing: antialiased; }
+}
+
+[x-cloak] { display: none !important; }
+
+@layer components {
+    .card {
+        @apply bg-white dark:bg-gray-800/70 rounded-2xl shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10 backdrop-blur;
+    }
+    .gradient-text {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-500 via-indigo-500 to-fuchsia-500;
+    }
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-violet-500 hover:to-indigo-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+    .btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-200 ring-1 ring-gray-200 dark:ring-white/10 hover:bg-gray-50 dark:hover:bg-white/5 transition;
+    }
+    .input {
+        @apply block w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-900/60 dark:text-gray-100 shadow-sm focus:border-violet-500 focus:ring-violet-500;
+    }
+    .chip {
+        @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold;
+    }
+}
+
+/* App background: subtle mesh gradient. */
+.app-bg {
+    background-color: #f6f6fb;
+    background-image:
+        radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.10) 0px, transparent 55%),
+        radial-gradient(at 98% 2%, rgba(217, 70, 239, 0.08) 0px, transparent 50%);
+}
+.dark .app-bg {
+    background-color: #0a0a14;
+    background-image:
+        radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.20) 0px, transparent 55%),
+        radial-gradient(at 98% 2%, rgba(217, 70, 239, 0.13) 0px, transparent 50%);
+}
+.auth-bg {
+    background: radial-gradient(at 20% 20%, rgba(139, 92, 246, 0.28), transparent 45%),
+                radial-gradient(at 80% 25%, rgba(217, 70, 239, 0.22), transparent 45%),
+                radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.20), transparent 50%),
+                #09090f;
+}
+
+/* Lightweight markdown preview styling (no typography plugin needed). */
+.md-preview { line-height: 1.7; }
+.md-preview h1 { font-size: 1.6rem; font-weight: 800; margin: 0.2em 0 0.5em; }
+.md-preview h2 { font-size: 1.3rem; font-weight: 700; margin: 1.1em 0 0.4em; }
+.md-preview h3 { font-size: 1.1rem; font-weight: 600; margin: 1em 0 0.3em; }
+.md-preview p { margin: 0.7em 0; }
+.md-preview ul, .md-preview ol { margin: 0.7em 0; padding-left: 1.4em; }
+.md-preview ul { list-style: disc; }
+.md-preview ol { list-style: decimal; }
+.md-preview li { margin: 0.25em 0; }
+.md-preview a { color: #7c3aed; text-decoration: underline; }
+.md-preview code { font-family: ui-monospace, monospace; background: rgba(127,127,127,0.15); padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.9em; }
+.md-preview strong { font-weight: 700; }
+.md-preview blockquote { border-left: 3px solid rgba(124,58,237,0.5); padding-left: 1em; color: #6b7280; margin: 0.8em 0; }
+
+.hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.hover-lift:hover { transform: translateY(-3px); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.animate-rise { animation: rise 0.45s cubic-bezier(0.21, 1, 0.4, 1) both; }
+
+/* Score ring sweeps smoothly when the value changes. */
+.ring-progress { transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { border-radius: 9999px; background: #cbd5e1; }
+.dark ::-webkit-scrollbar-thumb { background: #334155; }

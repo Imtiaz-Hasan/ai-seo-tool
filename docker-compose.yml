@@ -1,0 +1,78 @@
+# Scribe - full stack in one command.
+# Quick start:  cp .env.example .env && docker compose up
+# Then open http://localhost:8000 (demo mode, no API key needed).
+#
+# Local LLM (optional): docker compose --profile ollama up
+# then set LLM_PROVIDER=ollama and OLLAMA_BASE_URL=http://ollama:11434 in .env.
+
+# Env the entrypoint shell needs (its wait-for-db loop reads these via getenv).
+# Everything else (APP_*, LLM keys, drivers, APP_KEY) comes from the mounted .env
+# file. Note: APP_ENV is not set here, so `docker compose exec app php artisan test`
+# keeps PHPUnit's testing environment instead of being overridden to local.
+x-app-env: &app-env
+  DEMO_MODE: ${DEMO_MODE:-true}
+  DB_HOST: db
+  DB_PORT: 3306
+  DB_USERNAME: ${DB_USERNAME:-scribe}
+  DB_PASSWORD: ${DB_PASSWORD:-secret}
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: scribe-ai-seo
+    environment:
+      <<: *app-env
+      CONTAINER_ROLE: app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./.env:/var/www/html/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    image: scribe-ai-seo
+    command: php artisan queue:work --tries=3 --timeout=180
+    environment:
+      <<: *app-env
+      CONTAINER_ROLE: queue
+    volumes:
+      - ./.env:/var/www/html/.env
+    depends_on:
+      app:
+        condition: service_started
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-scribe}
+      MYSQL_USER: ${DB_USERNAME:-scribe}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD:-secret}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  # Optional local LLM. Not started by default - enable with `--profile ollama`.
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["ollama"]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  db-data:
+  ollama-data:
